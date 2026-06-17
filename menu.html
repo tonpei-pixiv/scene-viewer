@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Short Story Maker - Portal Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #060609;
+      --panel-color: rgba(18, 18, 24, 0.6);
+      --border-color: rgba(255, 255, 255, 0.05);
+      --pink-neon: #ff007f;
+      --blue-neon: #00f0ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 背景の装飾 */
+    .bg-decorator {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .glow-sphere-1 {
+      position: absolute;
+      top: -30%;
+      left: -20%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(255, 0, 127, 0.04) 0%, transparent 70%);
+      filter: blur(80px);
+    }
+
+    .glow-sphere-2 {
+      position: absolute;
+      bottom: -30%;
+      right: -10%;
+      width: 70%;
+      height: 70%;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.03) 0%, transparent 70%);
+      filter: blur(80px);
+    }
+
+    .grid-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.02;
+      background-image: 
+        linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ポータルコンテナ */
+    .portal-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 520px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    /* ヘッダー */
+    .header {
+      margin-bottom: 48px;
+    }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--pink-neon) 0%, #ff0055 100%);
+      border-radius: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 30px rgba(255, 0, 127, 0.25);
+    }
+
+    .logo-icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, var(--pink-neon) 0%, var(--blue-neon) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.35);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+
+    /* メニューリスト */
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .menu-button {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 22px 28px;
+      background-color: var(--panel-color);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.95rem;
+      font-weight: 900;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .menu-button:hover {
+      color: #ffffff;
+      border-color: rgba(255, 0, 127, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255, 0, 127, 0.08);
+    }
+
+    .glow-effect {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 0, 127, 0.12) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .menu-button:hover .glow-effect {
+      opacity: 1;
+    }
+
+    .button-text {
+      position: relative;
+      z-index: 2;
+    }
+
+    .arrow-icon {
+      width: 18px;
+      height: 18px;
+      color: rgba(255, 255, 255, 0.25);
+      transition: all 0.3s;
+      transform: translateX(0);
+    }
+
+    .menu-button:hover .arrow-icon {
+      color: var(--pink-neon);
+      transform: translateX(4px);
+    }
+
+    /* エントリがない場合 */
+    .empty-state {
+      padding: 32px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      background-color: rgba(255, 255, 255, 0.01);
+    }
+
+    .empty-state p {
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    /* フッター */
+    .footer {
+      margin-top: 64px;
+      color: rgba(255, 255, 255, 0.15);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+  </style>
+  <script>
+    // ホバー時のネオングロー効果のインタラクション
+    document.addEventListener('DOMContentLoaded', () => {
+      const buttons = document.querySelectorAll('.menu-button');
+      buttons.forEach(button => {
+        button.addEventListener('mousemove', (e) => {
+          const rect = button.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          button.style.setProperty('--x', `${x}px`);
+          button.style.setProperty('--y', `${y}px`);
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="bg-decorator">
+    <div class="glow-sphere-1"></div>
+    <div class="glow-sphere-2"></div>
+    <div class="grid-pattern"></div>
+  </div>
+
+  <div class="portal-container">
+    <div class="header">
+      <div class="logo-container">
+        <span class="logo-icon">🔮</span>
+      </div>
+      <h1>Short Story <span class="gradient-text">Studio</span></h1>
+      <p class="subtitle">Story Selection Portal</p>
+    </div>
+
+    <div class="menu-list">
+      
+        <a href="./index.html" class="menu-button group">
+          <div class="glow-effect"></div>
+          <span class="button-text">MAIN STORY</span>
+          <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
+  
+    </div>
+
+    <div class="footer">
+      <p>&copy; Short Story Maker. All Rights Reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
